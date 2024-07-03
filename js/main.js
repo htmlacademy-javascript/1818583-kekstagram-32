@@ -30,24 +30,7 @@ const getRandomPositiveInteger = (min, max, exclude = []) => {
   return result;
 };
 
-/**
- * Возвращает массив из определенного количества элементов исходного массива
- * Элементы не будут повторяться
- * @param elements
- * @param count
- * @returns {*[]}
- */
-
-const getRandomArrayElements = (elements, count = 1) => {
-  const usedIndices = [];
-
-  for (let i = 0; i < count; i++) {
-    const index = getRandomPositiveInteger(0, elements.length - 1, usedIndices);
-    usedIndices.push(index);
-  }
-
-  return usedIndices.map((index) => elements[index]);
-};
+const getRandomArrayElement = (elements) => elements[getRandomPositiveInteger(0, elements.length - 1)];
 
 const commentsList = [
   'Всё отлично!',
@@ -71,63 +54,49 @@ const authorNamesList = [
   'Зевс',
 ];
 
-let generatedCommentIdList = [];
+const generateComments = (commentsLength) => {
+  const generatedCommentIdList = [];
 
-const generateComment = () => {
-  const id = getRandomPositiveInteger(0, 999, generatedCommentIdList);
-  generatedCommentIdList.push(id);
-  let count = Math.ceil(Math.random() * 3);
-  if (count === 3) {
-    // снижаем вероятность появления двух комментариев вместо одного
-    count = 1;
-  }
-  const messages = getRandomArrayElements(commentsList, count);
-  let message = '';
-  messages.forEach((text, index) => {
-    if (index > 0) {
-      message += ` ${text}`;
-    } else {
-      message += text;
+  const generateComment = () => {
+    const id = getRandomPositiveInteger(0, 999, generatedCommentIdList);
+    generatedCommentIdList.push(id);
+
+    return {
+      id,
+      avatar: `img/avatar-${getRandomPositiveInteger(1, 6)}.svg`,
+      message: getRandomArrayElement(commentsList),
+      name: getRandomArrayElement(authorNamesList),
+    };
+  };
+
+  return Array.from({length: commentsLength}, generateComment);
+};
+
+const generatePhotos = (photosCount) => {
+  const generatedIdList = [];
+  const generatedPhotoIdList = [];
+
+  const generatePhoto = () => {
+    const id = getRandomPositiveInteger(1, 25, generatedIdList);
+    generatedIdList.push(id);
+    const photoId = getRandomPositiveInteger(1, 25, generatedPhotoIdList);
+    generatedPhotoIdList.push(photoId);
+    let phrase = '';
+    if (photoId > 1) {
+      phrase = ` Оно попало в кадр уже ${photoId === 2 ? 'во' : 'в'} ${photoId}-й раз!`;
     }
-  });
+    const commentsLength = getRandomPositiveInteger(0, 30);
 
-  return {
-    id,
-    avatar: `img/avatar-${getRandomPositiveInteger(1, 6)}.svg`,
-    message,
-    name: getRandomArrayElements(authorNamesList)[0],
+    return {
+      id,
+      url: `photos/${photoId}.jpg`,
+      description: `Я ЗАСНЯЯЯЛ!${phrase}`,
+      likes: getRandomPositiveInteger(15, 200),
+      comments: generateComments(commentsLength),
+    };
   };
+
+  return Array.from({length: photosCount}, generatePhoto);
 };
 
-let generatedIdList = [];
-let generatedPhotoIdList = [];
-
-const generatePhoto = () => {
-  const id = getRandomPositiveInteger(1, 25, generatedIdList);
-  generatedIdList.push(id);
-  const photoId = getRandomPositiveInteger(1, 25, generatedPhotoIdList);
-  generatedPhotoIdList.push(photoId);
-  let phrase = '';
-  if (photoId > 1) {
-    phrase = ` Оно попало в кадр уже ${photoId === 2 ? 'во' : 'в'} ${photoId}-й раз!`;
-  }
-  const commentsLength = getRandomPositiveInteger(0, 30);
-
-  return {
-    id,
-    url: `photos/${photoId}.jpg`,
-    description: `Я заснял это!${phrase}`,
-    likes: getRandomPositiveInteger(15, 200),
-    comments: Array.from({length: commentsLength}, generateComment),
-  };
-};
-
-const generatePhotoList = () => {
-  const result = Array.from({length: PHOTOS_COUNT}, generatePhoto);
-  generatedCommentIdList = [];
-  generatedIdList = [];
-  generatedPhotoIdList = [];
-  return result;
-};
-
-generatePhotoList();
+generatePhotos(PHOTOS_COUNT);
