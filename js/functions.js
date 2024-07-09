@@ -82,3 +82,56 @@ extractNumbers(2023); // 2023
 extractNumbers(-1); // 1
 extractNumbers(1.5); // 15
 
+/**
+ * Принимает строку в часовом формате и возвращает массив в формате [часы, минуты], где элементы массива - это numbers
+ * @param clock
+ * @returns {*}
+ */
+
+const parseClock = (clock) => {
+  const arr = clock.split(':');
+  return arr.map((str) => parseInt(str, 10));
+};
+
+/**
+ * Принимает время начала и конца рабочего дня, а также время старта и продолжительность встречи в минутах.
+ * Возвращает true, если встреча не выходит за рамки рабочего дня, и false, если выходит.
+ * @param workStart
+ * @param workEnd
+ * @param meetingStart
+ * @param meetingDuration
+ * @returns {boolean}
+ */
+
+const checkMeetingTime = (workStart, workEnd, meetingStart, meetingDuration) => {
+  const parsedWorkStart = parseClock(workStart);
+  const parsedWorkEnd = parseClock(workEnd);
+  const parsedMeetingStart = parseClock(meetingStart);
+
+  if (parsedWorkStart[0] > parsedMeetingStart[0]) {
+    return false;
+  } else if (parsedWorkStart[0] === parsedMeetingStart[0] && parsedWorkStart[1] > parsedMeetingStart[1]) {
+    return false;
+  }
+
+  const meetingHours = Math.floor(meetingDuration / 60);
+  const meetingMinutes = meetingDuration - meetingHours * 60;
+  const parsedMeetingEnd = [
+    parsedMeetingStart[0] + meetingHours,
+    parsedMeetingStart[1] + meetingMinutes,
+  ];
+
+  if (parsedMeetingEnd[0] > parsedWorkEnd[0]) {
+    return false;
+  } else if (parsedMeetingEnd[0] === parsedWorkEnd[0] && parsedMeetingEnd[1] > parsedWorkEnd[1]) {
+    return false;
+  }
+
+  return true;
+};
+
+checkMeetingTime('08:00', '17:30', '14:00', 90); // true
+checkMeetingTime('8:0', '10:0', '8:0', 120); // true
+checkMeetingTime('08:00', '14:30', '14:00', 90); // false
+checkMeetingTime('14:00', '17:30', '08:0', 90); // false
+checkMeetingTime('8:00', '17:30', '08:00', 900); // false
