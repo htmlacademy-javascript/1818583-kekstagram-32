@@ -1,3 +1,4 @@
 const PHOTOS_COUNT = 25;
+const COMMENTS_PER_LOAD = 5;
 
-export {PHOTOS_COUNT};
+export {PHOTOS_COUNT, COMMENTS_PER_LOAD};
