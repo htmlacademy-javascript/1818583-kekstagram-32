@@ -11,7 +11,6 @@ const socialCommentsContainer = bigPicture.querySelector('.social__comments');
 const socialCommentsShownCount = bigPicture.querySelector('.social__comment-shown-count');
 const socialCommentsTotalCount = bigPicture.querySelector('.social__comment-total-count');
 const commentsLoader = bigPicture.querySelector('.comments-loader');
-const body = document.querySelector('body');
 
 const clearComments = () => {
   const elements = socialCommentsContainer.querySelectorAll('.social__comment');
@@ -22,17 +21,17 @@ const clearComments = () => {
 
 const closeModal = () => {
   bigPicture.classList.add('hidden');
-  body.classList.remove('modal-open');
+  document.body.classList.remove('modal-open');
+  document.removeEventListener('keydown', closeModalByKey);
 };
 
-const closeModalByKey = (e) => {
+function closeModalByKey(e) {
   if (e.key === 'Escape') {
     closeModal();
   }
-};
+}
 
 closeButton.addEventListener('click', closeModal);
-document.addEventListener('keydown', closeModalByKey);
 
 let closure;
 
@@ -67,6 +66,8 @@ const renderBigPictureClosure = (data) => {
   };
 
   const renderModal = () => {
+    document.addEventListener('keydown', closeModalByKey);
+
     const {url, description, likes, comments} = data;
 
     image.src = url;
@@ -78,7 +79,7 @@ const renderBigPictureClosure = (data) => {
     coefficient = 1;
     renderComments(comments);
 
-    body.classList.add('modal-open');
+    document.body.classList.add('modal-open');
     bigPicture.classList.remove('hidden');
   };
 
