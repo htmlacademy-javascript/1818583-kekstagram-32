@@ -1,4 +1,5 @@
 import {MAX_HASHTAGS} from './constants';
+import {initFilters, destroyFilters} from './pictureEffectsManager';
 
 const formInput = document.querySelector('.img-upload__input');
 const imgUploadModal = document.querySelector('.img-upload__overlay');
@@ -7,21 +8,32 @@ const form = document.querySelector('#upload-select-image');
 const hashtagsInput = form.querySelector('.text__hashtags');
 const commentsInput = form.querySelector('.text__description');
 
-// Открытие и закрытие модального окна
+const defaultConfig = {
+  classTo: 'img-upload__field-wrapper',
+  errorClass: 'pristine-error',
+  errorTextParent: 'img-upload__field-wrapper',
+  errorTextTag: 'div',
+  errorTextClass: 'img-upload__field-wrapper--error',
+};
+
+const pristine = new Pristine(form, defaultConfig);
+
+// Открытие и закрытие модального окна с загрузкой картинки
 
 formInput.addEventListener('change', () => {
   imgUploadModal.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', closeFormByKey);
+  initFilters();
 });
 
 const closeForm = () => {
   imgUploadModal.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', closeFormByKey);
-  formInput.value = null;
-  hashtagsInput.value = '';
-  commentsInput.value = '';
+  form.reset();
+  pristine.reset();
+  destroyFilters();
 };
 
 function closeFormByKey(e) {
@@ -50,16 +62,6 @@ commentsInput.addEventListener('blur', () => {
 
 // Валидация формы
 
-const defaultConfig = {
-  classTo: 'img-upload__field-wrapper',
-  errorClass: 'pristine-error',
-  errorTextParent: 'img-upload__field-wrapper',
-  errorTextTag: 'div',
-  errorTextClass: 'img-upload__field-wrapper--error',
-};
-
-const pristine = new Pristine(form, defaultConfig);
-
 const convertHashtagStringToArray = (string) => string.split(' ').map((tag) => tag.trim()).filter((tag) => tag);
 
 const validateHashtagRepeat = (string) => {
@@ -71,7 +73,9 @@ const validateHashtagRepeat = (string) => {
 pristine.addValidator(
   hashtagsInput,
   validateHashtagRepeat,
-  'Хештеги повторяются'
+  'Хештеги повторяются',
+  3,
+  true,
 );
 
 const validateHashtagLength = (string) => {
@@ -82,7 +86,9 @@ const validateHashtagLength = (string) => {
 pristine.addValidator(
   hashtagsInput,
   validateHashtagLength,
-  'Превышено максимальное количество хештегов'
+  'Превышено максимальное количество хештегов',
+  2,
+  true,
 );
 
 const validateHashtag = (string) => {
@@ -102,7 +108,9 @@ const validateHashtag = (string) => {
 pristine.addValidator(
   hashtagsInput,
   validateHashtag,
-  'Невалидный хештег'
+  'Невалидный хештег',
+  1,
+  true,
 );
 
 const validateComment = (value) => value.length <= 140;
