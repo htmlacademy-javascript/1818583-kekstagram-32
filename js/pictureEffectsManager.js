@@ -157,6 +157,7 @@ effectsListElement.addEventListener('click', (e) => {
 });
 
 const initFilters = () => {
+  console.log('init');
   effectSliderContainer.classList.add('hidden');
   currentEffect = Effects.none;
   acceptEffect();

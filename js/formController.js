@@ -1,5 +1,6 @@
-import {MAX_HASHTAGS} from './constants';
+import {API_URL, MAX_HASHTAGS} from './constants';
 import {initFilters, destroyFilters} from './pictureEffectsManager';
+import {showErrorUploadMessage, showSuccessUploadMessage} from './api';
 
 const formInput = document.querySelector('.img-upload__input');
 const imgUploadModal = document.querySelector('.img-upload__overlay');
@@ -7,6 +8,7 @@ const closeButton = document.querySelector('.img-upload__cancel');
 const form = document.querySelector('#upload-select-image');
 const hashtagsInput = form.querySelector('.text__hashtags');
 const commentsInput = form.querySelector('.text__description');
+const submitButton = form.querySelector('#upload-submit');
 
 const defaultConfig = {
   classTo: 'img-upload__field-wrapper',
@@ -20,44 +22,44 @@ const pristine = new Pristine(form, defaultConfig);
 
 // Открытие и закрытие модального окна с загрузкой картинки
 
-formInput.addEventListener('change', () => {
+const openForm = () => {
   imgUploadModal.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', closeFormByKey);
   initFilters();
+};
+
+formInput.addEventListener('change', () => {
+  console.log('bbbbbb');
+  openForm();
 });
 
 const closeForm = () => {
   imgUploadModal.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', closeFormByKey);
-  form.reset();
-  pristine.reset();
   destroyFilters();
 };
 
+const resetForm = () => {
+  form.reset();
+  pristine.reset();
+};
+
 function closeFormByKey(e) {
+  if (e.target.classList.contains('text__hashtags') || e.target.classList.contains('text__description')) {
+    return;
+  }
+
   if (e.key === 'Escape') {
     closeForm();
+    resetForm();
   }
 }
 
-closeButton.addEventListener('click', closeForm);
-
-hashtagsInput.addEventListener('focus', () => {
-  document.removeEventListener('keydown', closeFormByKey);
-});
-
-hashtagsInput.addEventListener('blur', () => {
-  document.addEventListener('keydown', closeFormByKey);
-});
-
-commentsInput.addEventListener('focus', () => {
-  document.removeEventListener('keydown', closeFormByKey);
-});
-
-commentsInput.addEventListener('blur', () => {
-  document.addEventListener('keydown', closeFormByKey);
+closeButton.addEventListener('click', () => {
+  closeForm();
+  resetForm();
 });
 
 // Валидация формы
@@ -127,6 +129,31 @@ form.addEventListener('submit', (e) => {
   const isValid = pristine.validate();
 
   if (isValid) {
-    closeForm();
+    submitButton.disabled = true;
+    const formData = new FormData(e.target);
+
+    fetch(
+      `${API_URL}q`, // тест ошибки
+      {
+        method: 'POST',
+        body: formData,
+      },
+    )
+      .then((res) => {
+        if (res.ok) {
+          console.log('close form');
+          closeForm();
+          resetForm();
+          showSuccessUploadMessage();
+        } else {
+          closeForm();
+          showErrorUploadMessage();
+        }
+      })
+      .finally(() => {
+        submitButton.disabled = false;
+      });
   }
 });
+
+export {openForm};
