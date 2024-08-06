@@ -15,23 +15,23 @@ const showDataErrorMessage = () => {
 };
 
 const showSuccessUploadMessage = () => {
-  document.body.insertAdjacentElement('beforeend', successTemplate);
-  const element = document.querySelector('.success');
-  const successButton = element.querySelector('.success__button');
+  console.log('kkkk');
+  const cloned = successTemplate.cloneNode(true);
+  const successButton = cloned.querySelector('.success__button');
   successButton.addEventListener('click', () => {
-    element.remove();
-  }, {once: true});
+    cloned.remove();
+  });
+  document.body.insertAdjacentElement('beforeend', cloned);
 };
 
 const showErrorUploadMessage = () => {
-  document.body.insertAdjacentElement('beforeend', errorTemplate);
-  const element = document.querySelector('.error');
-  const errorButton = element.querySelector('.error__button');
+  const cloned = errorTemplate.cloneNode(true);
+  const errorButton = cloned.querySelector('.error__button');
   errorButton.addEventListener('click', () => {
-    console.log('wfwfvv');
-    element.remove();
+    cloned.remove();
     openForm();
-  }, {once: true});
+  });
+  document.body.insertAdjacentElement('beforeend', cloned);
 };
 
 const getData = () => {

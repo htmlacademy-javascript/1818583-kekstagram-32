@@ -18,6 +18,8 @@ const defaultConfig = {
   errorTextClass: 'img-upload__field-wrapper--error',
 };
 
+console.log('formController');
+
 const pristine = new Pristine(form, defaultConfig);
 
 // Открытие и закрытие модального окна с загрузкой картинки

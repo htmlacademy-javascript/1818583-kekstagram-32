@@ -85,6 +85,8 @@ const acceptEffect = (effect, intensity) => {
   previewImageElement.style.filter = `${filter.effect}(${intensity}${filter.unit})`;
 };
 
+console.log('pictureEffectsManager');
+
 const initSlider = () => {
   console.log('init slider');
   if (effectSliderElement.noUiSlider) {
