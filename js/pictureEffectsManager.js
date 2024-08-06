@@ -1,43 +1,6 @@
-import {DEFAULT_PHOTO_SCALE, MAX_PHOTO_SCALE, MIN_PHOTO_SCALE, PHOTO_SCALE_STEP} from './constants';
+import {MAX_PHOTO_SCALE, MIN_PHOTO_SCALE, PHOTO_SCALE_STEP} from './constants';
 
-// Масштаб изображения
-
-const scaleMinusButton = document.querySelector('.scale__control--smaller');
-const scalePlusButton = document.querySelector('.scale__control--bigger');
-const scaleInputElement = document.querySelector('.scale__control--value');
-const imagePreviewElement = document.querySelector('.img-upload__preview').querySelector('img');
-
-const scalePreviewImage = (value) => {
-  scaleInputElement.value = `${value}%`;
-  imagePreviewElement.style.transform = `scale(${value / 100})`;
-};
-
-const scaleMinus = () => {
-  let newValue = parseInt(scaleInputElement.value, 10) - PHOTO_SCALE_STEP;
-  if (newValue < MIN_PHOTO_SCALE) {
-    newValue = MIN_PHOTO_SCALE;
-  }
-  scalePreviewImage(newValue);
-};
-
-const scalePlus = () => {
-  let newValue = parseInt(scaleInputElement.value, 10) + PHOTO_SCALE_STEP;
-  if (newValue > MAX_PHOTO_SCALE) {
-    newValue = MAX_PHOTO_SCALE;
-  }
-  scalePreviewImage(newValue);
-};
-
-scaleMinusButton.addEventListener('click', scaleMinus);
-scalePlusButton.addEventListener('click', scalePlus);
-
-// Эффекты изображения
-
-const effectSliderContainer = document.querySelector('.img-upload__effect-level');
-const effectSliderElement = document.querySelector('.effect-level__slider');
-const effectValueElement = document.querySelector('.effect-level__value');
-const previewImageElement = document.querySelector('.img-upload__preview').querySelector('img');
-effectSliderContainer.classList.add('hidden');
+// инициация слайдера
 
 const Effects = {
   chrome: 'chrome',
@@ -86,6 +49,10 @@ const EffectSettings = {
   },
 };
 
+const effectSliderElement = document.querySelector('.effect-level__slider');
+const effectValueElement = document.querySelector('.effect-level__value');
+const previewImageElement = document.querySelector('.img-upload__preview').querySelector('img');
+
 const sliderOptions = {
   range: {
     min: 0,
@@ -106,6 +73,72 @@ const sliderOptions = {
   },
 };
 
+let currentEffect = Effects.none;
+
+const acceptEffect = (effect, intensity) => {
+  if (!effect || intensity === undefined || effect === Effects.none) {
+    previewImageElement.style.filter = 'none';
+    return;
+  }
+
+  const filter = EffectSettings[effect];
+  previewImageElement.style.filter = `${filter.effect}(${intensity}${filter.unit})`;
+};
+
+const initSlider = () => {
+  console.log('init slider');
+  if (effectSliderElement.noUiSlider) {
+    console.log('destroy slider');
+    effectSliderElement.noUiSlider.destroy();
+  }
+
+  noUiSlider.create(effectSliderElement, sliderOptions);
+
+  effectSliderElement.noUiSlider.on('update', () => {
+    const value = effectSliderElement.noUiSlider.get();
+    effectValueElement.value = value;
+    acceptEffect(currentEffect, value);
+  });
+};
+
+document.addEventListener('DOMContentLoaded', initSlider);
+
+// Масштаб изображения
+
+const scaleMinusButton = document.querySelector('.scale__control--smaller');
+const scalePlusButton = document.querySelector('.scale__control--bigger');
+const scaleInputElement = document.querySelector('.scale__control--value');
+const imagePreviewElement = document.querySelector('.img-upload__preview').querySelector('img');
+
+const scalePreviewImage = (value) => {
+  scaleInputElement.value = `${value}%`;
+  imagePreviewElement.style.transform = `scale(${value / 100})`;
+};
+
+const scaleMinus = () => {
+  let newValue = parseInt(scaleInputElement.value, 10) - PHOTO_SCALE_STEP;
+  if (newValue < MIN_PHOTO_SCALE) {
+    newValue = MIN_PHOTO_SCALE;
+  }
+  scalePreviewImage(newValue);
+};
+
+const scalePlus = () => {
+  let newValue = parseInt(scaleInputElement.value, 10) + PHOTO_SCALE_STEP;
+  if (newValue > MAX_PHOTO_SCALE) {
+    newValue = MAX_PHOTO_SCALE;
+  }
+  scalePreviewImage(newValue);
+};
+
+scaleMinusButton.addEventListener('click', scaleMinus);
+scalePlusButton.addEventListener('click', scalePlus);
+
+// Эффекты изображения
+
+const effectSliderContainer = document.querySelector('.img-upload__effect-level');
+effectSliderContainer.classList.add('hidden');
+
 const updateSliderOptions = (newMin, newMax, newStep) => {
   effectSliderElement.noUiSlider.updateOptions({
     range: {
@@ -117,16 +150,12 @@ const updateSliderOptions = (newMin, newMax, newStep) => {
   });
 };
 
-let currentEffect = Effects.none;
-
-const acceptEffect = (effect, intensity) => {
-  if (!effect || intensity === undefined || effect === Effects.none) {
-    previewImageElement.style.filter = 'none';
-    return;
-  }
-
-  const filter = EffectSettings[effect];
-  previewImageElement.style.filter = `${filter.effect}(${intensity}${filter.unit})`;
+const resetFilter = () => {
+  console.log('reset filter');
+  effectSliderContainer.classList.add('hidden');
+  currentEffect = Effects.none;
+  effectSliderElement.noUiSlider.reset();
+  acceptEffect();
 };
 
 const effectsListElement = document.querySelector('.effects__list');
@@ -151,29 +180,8 @@ effectsListElement.addEventListener('click', (e) => {
     updateSliderOptions(effect.min, effect.max, effect.step);
     effectSliderContainer.classList.remove('hidden');
   } else {
-    acceptEffect(currentEffect);
-    effectSliderContainer.classList.add('hidden');
+    resetFilter();
   }
 });
 
-const initFilters = () => {
-  console.log('init');
-  effectSliderContainer.classList.add('hidden');
-  currentEffect = Effects.none;
-  acceptEffect();
-
-  noUiSlider.create(effectSliderElement, sliderOptions);
-
-  effectSliderElement.noUiSlider.on('update', () => {
-    const value = effectSliderElement.noUiSlider.get();
-    effectValueElement.value = value;
-    acceptEffect(currentEffect, value);
-  });
-};
-
-const destroyFilters = () => {
-  scalePreviewImage(DEFAULT_PHOTO_SCALE);
-  effectSliderElement.noUiSlider.destroy();
-};
-
-export {destroyFilters, initFilters};
+export {scalePreviewImage, resetFilter};

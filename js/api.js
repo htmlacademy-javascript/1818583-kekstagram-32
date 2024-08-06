@@ -20,7 +20,7 @@ const showSuccessUploadMessage = () => {
   const successButton = element.querySelector('.success__button');
   successButton.addEventListener('click', () => {
     element.remove();
-  });
+  }, {once: true});
 };
 
 const showErrorUploadMessage = () => {
@@ -31,7 +31,7 @@ const showErrorUploadMessage = () => {
     console.log('wfwfvv');
     element.remove();
     openForm();
-  });
+  }, {once: true});
 };
 
 const getData = () => {

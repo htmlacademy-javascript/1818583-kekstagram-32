@@ -1,5 +1,5 @@
-import {API_URL, MAX_HASHTAGS} from './constants';
-import {initFilters, destroyFilters} from './pictureEffectsManager';
+import {API_URL, DEFAULT_PHOTO_SCALE, MAX_HASHTAGS} from './constants';
+import {resetFilter, scalePreviewImage} from './pictureEffectsManager';
 import {showErrorUploadMessage, showSuccessUploadMessage} from './api';
 
 const formInput = document.querySelector('.img-upload__input');
@@ -23,25 +23,23 @@ const pristine = new Pristine(form, defaultConfig);
 // Открытие и закрытие модального окна с загрузкой картинки
 
 const openForm = () => {
+  console.log('open form');
   imgUploadModal.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', closeFormByKey);
-  initFilters();
 };
 
-formInput.addEventListener('change', () => {
-  console.log('bbbbbb');
-  openForm();
-});
+formInput.addEventListener('change', openForm);
 
 const closeForm = () => {
   imgUploadModal.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', closeFormByKey);
-  destroyFilters();
 };
 
 const resetForm = () => {
+  scalePreviewImage(DEFAULT_PHOTO_SCALE);
+  resetFilter();
   form.reset();
   pristine.reset();
 };
@@ -128,32 +126,32 @@ form.addEventListener('submit', (e) => {
 
   const isValid = pristine.validate();
 
-  if (isValid) {
-    submitButton.disabled = true;
-    const formData = new FormData(e.target);
-
-    fetch(
-      `${API_URL}q`, // тест ошибки
-      {
-        method: 'POST',
-        body: formData,
-      },
-    )
-      .then((res) => {
-        if (res.ok) {
-          console.log('close form');
-          closeForm();
-          resetForm();
-          showSuccessUploadMessage();
-        } else {
-          closeForm();
-          showErrorUploadMessage();
-        }
-      })
-      .finally(() => {
-        submitButton.disabled = false;
-      });
+  if (!isValid) {
+    return;
   }
+
+  submitButton.disabled = true;
+  const formData = new FormData(e.target);
+
+  fetch(
+    `${API_URL}`,
+    {
+      method: 'POST',
+      body: formData,
+    },
+  )
+    .then((res) => {
+      if (res.ok) {
+        resetForm();
+        showSuccessUploadMessage();
+      } else {
+        showErrorUploadMessage();
+      }
+    })
+    .finally(() => {
+      closeForm();
+      submitButton.disabled = false;
+    });
 });
 
 export {openForm};
