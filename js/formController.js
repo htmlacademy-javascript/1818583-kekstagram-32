@@ -18,14 +18,11 @@ const defaultConfig = {
   errorTextClass: 'img-upload__field-wrapper--error',
 };
 
-console.log('formController');
-
 const pristine = new Pristine(form, defaultConfig);
 
 // Открытие и закрытие модального окна с загрузкой картинки
 
 const openForm = () => {
-  console.log('open form');
   imgUploadModal.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', closeFormByKey);
@@ -136,7 +133,7 @@ form.addEventListener('submit', (e) => {
   const formData = new FormData(e.target);
 
   fetch(
-    `${API_URL}`,
+    `${API_URL}e`,
     {
       method: 'POST',
       body: formData,

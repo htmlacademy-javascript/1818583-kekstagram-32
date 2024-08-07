@@ -15,23 +15,44 @@ const showDataErrorMessage = () => {
 };
 
 const showSuccessUploadMessage = () => {
-  console.log('kkkk');
   const cloned = successTemplate.cloneNode(true);
   const successButton = cloned.querySelector('.success__button');
-  successButton.addEventListener('click', () => {
+
+  const closeModal = () => {
+    document.removeEventListener('keydown', onEscape);
     cloned.remove();
-  });
+  };
+
+  function onEscape(e) {
+    if (e.key === 'Escape') {
+      closeModal();
+    }
+  }
+
+  successButton.addEventListener('click', closeModal);
   document.body.insertAdjacentElement('beforeend', cloned);
+  document.addEventListener('keydown', onEscape);
 };
 
 const showErrorUploadMessage = () => {
   const cloned = errorTemplate.cloneNode(true);
   const errorButton = cloned.querySelector('.error__button');
-  errorButton.addEventListener('click', () => {
+
+  const closeModal = () => {
+    document.removeEventListener('keydown', onEscape);
     cloned.remove();
     openForm();
-  });
+  };
+
+  function onEscape(e) {
+    if (e.key === 'Escape') {
+      closeModal();
+    }
+  }
+
+  errorButton.addEventListener('click', closeModal);
   document.body.insertAdjacentElement('beforeend', cloned);
+  document.addEventListener('keydown', onEscape);
 };
 
 const getData = () => {

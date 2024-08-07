@@ -85,15 +85,7 @@ const acceptEffect = (effect, intensity) => {
   previewImageElement.style.filter = `${filter.effect}(${intensity}${filter.unit})`;
 };
 
-console.log('pictureEffectsManager');
-
 const initSlider = () => {
-  console.log('init slider');
-  if (effectSliderElement.noUiSlider) {
-    console.log('destroy slider');
-    effectSliderElement.noUiSlider.destroy();
-  }
-
   noUiSlider.create(effectSliderElement, sliderOptions);
 
   effectSliderElement.noUiSlider.on('update', () => {
@@ -153,7 +145,6 @@ const updateSliderOptions = (newMin, newMax, newStep) => {
 };
 
 const resetFilter = () => {
-  console.log('reset filter');
   effectSliderContainer.classList.add('hidden');
   currentEffect = Effects.none;
   effectSliderElement.noUiSlider.reset();
