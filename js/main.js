@@ -1,7 +1,3 @@
-import {PHOTOS_COUNT} from './constants';
-import {generatePhotos} from './data';
-import {renderPictures} from './renderPictures';
+import {getData} from './api';
 
-const photos = generatePhotos(PHOTOS_COUNT);
-
-renderPictures(photos);
+getData();
