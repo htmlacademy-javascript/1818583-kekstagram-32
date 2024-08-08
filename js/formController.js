@@ -1,4 +1,4 @@
-import {API_URL, DEFAULT_PHOTO_SCALE, MAX_HASHTAGS} from './constants';
+import {API_URL, DEFAULT_PHOTO_SCALE, FILE_TYPES, MAX_HASHTAGS} from './constants';
 import {resetFilter, scalePreviewImage} from './pictureEffectsManager';
 import {showErrorUploadMessage, showSuccessUploadMessage} from './api';
 
@@ -9,6 +9,7 @@ const form = document.querySelector('#upload-select-image');
 const hashtagsInput = form.querySelector('.text__hashtags');
 const commentsInput = form.querySelector('.text__description');
 const submitButton = form.querySelector('#upload-submit');
+const previewImageElement = document.querySelector('.img-upload__preview').querySelector('img');
 
 const defaultConfig = {
   classTo: 'img-upload__field-wrapper',
@@ -23,6 +24,15 @@ const pristine = new Pristine(form, defaultConfig);
 // Открытие и закрытие модального окна с загрузкой картинки
 
 const openForm = () => {
+  const file = formInput.files[0];
+  const fileName = file.name.toLowerCase();
+
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    previewImageElement.src = URL.createObjectURL(file);
+  }
+
   imgUploadModal.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', closeFormByKey);
@@ -133,7 +143,7 @@ form.addEventListener('submit', (e) => {
   const formData = new FormData(e.target);
 
   fetch(
-    `${API_URL}e`,
+    API_URL,
     {
       method: 'POST',
       body: formData,
