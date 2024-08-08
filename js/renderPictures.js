@@ -1,9 +1,10 @@
 import {renderBigPicture} from './renderBigPicture';
 
+const container = document.querySelector('.pictures');
+
 const renderPictures = (photos) => {
   const template = document.querySelector('#picture').content;
   const templateContent = template.querySelector('.picture');
-  const container = document.querySelector('.pictures');
   const fragment = document.createDocumentFragment();
 
   for (let i = 0; i < photos.length; i++) {
@@ -34,4 +35,11 @@ const renderPictures = (photos) => {
   });
 };
 
-export {renderPictures};
+const removePictures = () => {
+  const pictures = container.querySelectorAll('.picture');
+  pictures.forEach((picture) => {
+    picture.remove();
+  });
+};
+
+export {renderPictures, removePictures};
