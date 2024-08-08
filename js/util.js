@@ -30,4 +30,36 @@ const getRandomPositiveInteger = (min, max, exclude = []) => {
 
 const getRandomArrayElement = (elements) => elements[getRandomPositiveInteger(0, elements.length - 1)];
 
-export {getRandomArrayElement, getRandomPositiveInteger};
+/**
+ * Выбирает случайные неповторяющиеся элементы массива
+ * Не мутирует исходный массив
+ * @param array
+ * @param count
+ * @returns {*|*[]}
+ */
+
+const getRandomArrayElements = (array, count) => {
+  const result = [...array];
+
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+
+  if (result.length <= count) {
+    return result;
+  }
+
+  return result.slice(0, count);
+};
+
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+export {getRandomArrayElement, getRandomPositiveInteger, getRandomArrayElements, debounce};

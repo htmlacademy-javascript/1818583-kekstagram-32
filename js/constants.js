@@ -6,6 +6,7 @@ const MIN_PHOTO_SCALE = 25;
 const MAX_PHOTO_SCALE = 100;
 const DEFAULT_PHOTO_SCALE = 100;
 const API_URL = 'https://32.javascript.htmlacademy.pro/kekstagram';
+const DEBOUNCE_TIME = 500;
 
 export {
   // PHOTOS_COUNT,
@@ -15,5 +16,6 @@ export {
   MAX_PHOTO_SCALE,
   PHOTO_SCALE_STEP,
   DEFAULT_PHOTO_SCALE,
-  API_URL
+  API_URL,
+  DEBOUNCE_TIME
 };

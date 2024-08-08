@@ -1,10 +1,12 @@
 import {renderPictures} from './renderPictures';
 import {API_URL} from './constants';
 import {openForm} from './formController';
+import {savePhotos} from './picturesFilter';
 
 const dataErrorTemplate = document.querySelector('#data-error').content.querySelector('.data-error');
 const successTemplate = document.querySelector('#success').content.querySelector('.success');
 const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+const imgFilers = document.querySelector('.img-filters');
 
 const showDataErrorMessage = () => {
   document.body.insertAdjacentElement('beforeend', dataErrorTemplate);
@@ -59,7 +61,9 @@ const getData = () => {
   fetch(`${API_URL}/data`)
     .then((res) => res.json())
     .then((data) => {
+      savePhotos(data);
       renderPictures(data);
+      imgFilers.classList.remove('img-filters--inactive');
     })
     .catch(() => {
       showDataErrorMessage();
