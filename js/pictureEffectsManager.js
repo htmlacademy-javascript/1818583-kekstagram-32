@@ -1,5 +1,16 @@
 import {MAX_PHOTO_SCALE, MIN_PHOTO_SCALE, PHOTO_SCALE_STEP} from './constants';
 
+const effectSliderElement = document.querySelector('.effect-level__slider');
+const effectValueElement = document.querySelector('.effect-level__value');
+const previewImageElement = document.querySelector('.img-upload__preview').querySelector('img');
+const scaleMinusButton = document.querySelector('.scale__control--smaller');
+const scalePlusButton = document.querySelector('.scale__control--bigger');
+const scaleInputElement = document.querySelector('.scale__control--value');
+const imagePreviewElement = document.querySelector('.img-upload__preview').querySelector('img');
+const effectSliderContainer = document.querySelector('.img-upload__effect-level');
+effectSliderContainer.classList.add('hidden');
+const effectsListElement = document.querySelector('.effects__list');
+
 // инициация слайдера
 
 const Effects = {
@@ -49,10 +60,6 @@ const EffectSettings = {
   },
 };
 
-const effectSliderElement = document.querySelector('.effect-level__slider');
-const effectValueElement = document.querySelector('.effect-level__value');
-const previewImageElement = document.querySelector('.img-upload__preview').querySelector('img');
-
 const sliderOptions = {
   range: {
     min: 0,
@@ -99,11 +106,6 @@ document.addEventListener('DOMContentLoaded', initSlider);
 
 // Масштаб изображения
 
-const scaleMinusButton = document.querySelector('.scale__control--smaller');
-const scalePlusButton = document.querySelector('.scale__control--bigger');
-const scaleInputElement = document.querySelector('.scale__control--value');
-const imagePreviewElement = document.querySelector('.img-upload__preview').querySelector('img');
-
 const scalePreviewImage = (value) => {
   scaleInputElement.value = `${value}%`;
   imagePreviewElement.style.transform = `scale(${value / 100})`;
@@ -130,9 +132,6 @@ scalePlusButton.addEventListener('click', scalePlus);
 
 // Эффекты изображения
 
-const effectSliderContainer = document.querySelector('.img-upload__effect-level');
-effectSliderContainer.classList.add('hidden');
-
 const updateSliderOptions = (newMin, newMax, newStep) => {
   effectSliderElement.noUiSlider.updateOptions({
     range: {
@@ -150,8 +149,6 @@ const resetFilter = () => {
   effectSliderElement.noUiSlider.reset();
   acceptEffect();
 };
-
-const effectsListElement = document.querySelector('.effects__list');
 
 effectsListElement.addEventListener('click', (e) => {
   const radio = e.target.closest('.effects__radio');

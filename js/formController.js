@@ -147,7 +147,6 @@ form.addEventListener('submit', (e) => {
     {
       method: 'POST',
       body: formData,
-      headers: new Headers({'content-type': 'multipart/form-data'}),
     },
   )
     .then((res) => {
@@ -157,6 +156,9 @@ form.addEventListener('submit', (e) => {
       } else {
         showErrorUploadMessage();
       }
+    })
+    .catch(() => {
+      showErrorUploadMessage();
     })
     .finally(() => {
       closeForm();

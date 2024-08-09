@@ -2,6 +2,9 @@ import {removePictures, renderPictures} from './renderPictures';
 import {debounce, getRandomArrayElements} from './util';
 import {DEBOUNCE_TIME} from './constants';
 
+const filtersForm = document.querySelector('.img-filters__form');
+const filterButtons = document.querySelectorAll('.img-filters__button');
+
 let photos = [];
 
 const savePhotos = (data) => {
@@ -25,9 +28,6 @@ const filterPictures = (id) => {
     }
   }
 };
-
-const filtersForm = document.querySelector('.img-filters__form');
-const filterButtons = document.querySelectorAll('.img-filters__button');
 
 const debouncedFilterPictures = debounce(filterPictures, DEBOUNCE_TIME);
 
