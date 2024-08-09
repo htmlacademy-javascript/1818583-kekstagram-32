@@ -1,43 +1,17 @@
-import {DEFAULT_PHOTO_SCALE, MAX_PHOTO_SCALE, MIN_PHOTO_SCALE, PHOTO_SCALE_STEP} from './constants';
+import {MAX_PHOTO_SCALE, MIN_PHOTO_SCALE, PHOTO_SCALE_STEP} from './constants';
 
-// Масштаб изображения
-
+const effectSliderElement = document.querySelector('.effect-level__slider');
+const effectValueElement = document.querySelector('.effect-level__value');
+const previewImageElement = document.querySelector('.img-upload__preview').querySelector('img');
 const scaleMinusButton = document.querySelector('.scale__control--smaller');
 const scalePlusButton = document.querySelector('.scale__control--bigger');
 const scaleInputElement = document.querySelector('.scale__control--value');
 const imagePreviewElement = document.querySelector('.img-upload__preview').querySelector('img');
-
-const scalePreviewImage = (value) => {
-  scaleInputElement.value = `${value}%`;
-  imagePreviewElement.style.transform = `scale(${value / 100})`;
-};
-
-const scaleMinus = () => {
-  let newValue = parseInt(scaleInputElement.value, 10) - PHOTO_SCALE_STEP;
-  if (newValue < MIN_PHOTO_SCALE) {
-    newValue = MIN_PHOTO_SCALE;
-  }
-  scalePreviewImage(newValue);
-};
-
-const scalePlus = () => {
-  let newValue = parseInt(scaleInputElement.value, 10) + PHOTO_SCALE_STEP;
-  if (newValue > MAX_PHOTO_SCALE) {
-    newValue = MAX_PHOTO_SCALE;
-  }
-  scalePreviewImage(newValue);
-};
-
-scaleMinusButton.addEventListener('click', scaleMinus);
-scalePlusButton.addEventListener('click', scalePlus);
-
-// Эффекты изображения
-
 const effectSliderContainer = document.querySelector('.img-upload__effect-level');
-const effectSliderElement = document.querySelector('.effect-level__slider');
-const effectValueElement = document.querySelector('.effect-level__value');
-const previewImageElement = document.querySelector('.img-upload__preview').querySelector('img');
 effectSliderContainer.classList.add('hidden');
+const effectsListElement = document.querySelector('.effects__list');
+
+// инициация слайдера
 
 const Effects = {
   chrome: 'chrome',
@@ -106,17 +80,6 @@ const sliderOptions = {
   },
 };
 
-const updateSliderOptions = (newMin, newMax, newStep) => {
-  effectSliderElement.noUiSlider.updateOptions({
-    range: {
-      min: newMin,
-      max: newMax,
-    },
-    step: newStep,
-    start: newMax,
-  });
-};
-
 let currentEffect = Effects.none;
 
 const acceptEffect = (effect, intensity) => {
@@ -129,7 +92,63 @@ const acceptEffect = (effect, intensity) => {
   previewImageElement.style.filter = `${filter.effect}(${intensity}${filter.unit})`;
 };
 
-const effectsListElement = document.querySelector('.effects__list');
+const initSlider = () => {
+  noUiSlider.create(effectSliderElement, sliderOptions);
+
+  effectSliderElement.noUiSlider.on('update', () => {
+    const value = effectSliderElement.noUiSlider.get();
+    effectValueElement.value = value;
+    acceptEffect(currentEffect, value);
+  });
+};
+
+document.addEventListener('DOMContentLoaded', initSlider);
+
+// Масштаб изображения
+
+const scalePreviewImage = (value) => {
+  scaleInputElement.value = `${value}%`;
+  imagePreviewElement.style.transform = `scale(${value / 100})`;
+};
+
+const scaleMinus = () => {
+  let newValue = parseInt(scaleInputElement.value, 10) - PHOTO_SCALE_STEP;
+  if (newValue < MIN_PHOTO_SCALE) {
+    newValue = MIN_PHOTO_SCALE;
+  }
+  scalePreviewImage(newValue);
+};
+
+const scalePlus = () => {
+  let newValue = parseInt(scaleInputElement.value, 10) + PHOTO_SCALE_STEP;
+  if (newValue > MAX_PHOTO_SCALE) {
+    newValue = MAX_PHOTO_SCALE;
+  }
+  scalePreviewImage(newValue);
+};
+
+scaleMinusButton.addEventListener('click', scaleMinus);
+scalePlusButton.addEventListener('click', scalePlus);
+
+// Эффекты изображения
+
+const updateSliderOptions = (newMin, newMax, newStep) => {
+  effectSliderElement.noUiSlider.updateOptions({
+    range: {
+      min: newMin,
+      max: newMax,
+    },
+    step: newStep,
+    start: newMax,
+  });
+};
+
+const resetFilter = () => {
+  effectSliderContainer.classList.add('hidden');
+  currentEffect = Effects.none;
+  effectSliderElement.noUiSlider.reset();
+  acceptEffect();
+};
 
 effectsListElement.addEventListener('click', (e) => {
   const radio = e.target.closest('.effects__radio');
@@ -151,28 +170,8 @@ effectsListElement.addEventListener('click', (e) => {
     updateSliderOptions(effect.min, effect.max, effect.step);
     effectSliderContainer.classList.remove('hidden');
   } else {
-    acceptEffect(currentEffect);
-    effectSliderContainer.classList.add('hidden');
+    resetFilter();
   }
 });
 
-const initFilters = () => {
-  effectSliderContainer.classList.add('hidden');
-  currentEffect = Effects.none;
-  acceptEffect();
-
-  noUiSlider.create(effectSliderElement, sliderOptions);
-
-  effectSliderElement.noUiSlider.on('update', () => {
-    const value = effectSliderElement.noUiSlider.get();
-    effectValueElement.value = value;
-    acceptEffect(currentEffect, value);
-  });
-};
-
-const destroyFilters = () => {
-  scalePreviewImage(DEFAULT_PHOTO_SCALE);
-  effectSliderElement.noUiSlider.destroy();
-};
-
-export {destroyFilters, initFilters};
+export {scalePreviewImage, resetFilter};
