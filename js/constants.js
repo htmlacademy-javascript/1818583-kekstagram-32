@@ -1,4 +1,3 @@
-// const PHOTOS_COUNT = 25;
 const COMMENTS_PER_LOAD = 5;
 const MAX_HASHTAGS = 5;
 const PHOTO_SCALE_STEP = 25;
@@ -10,7 +9,6 @@ const DEBOUNCE_TIME = 500;
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
 export {
-  // PHOTOS_COUNT,
   COMMENTS_PER_LOAD,
   MAX_HASHTAGS,
   MIN_PHOTO_SCALE,
