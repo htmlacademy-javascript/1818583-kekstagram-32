@@ -5,10 +5,10 @@ import {DEBOUNCE_TIME} from './constants';
 const filtersForm = document.querySelector('.img-filters__form');
 const filterButtons = document.querySelectorAll('.img-filters__button');
 
-let photos = [];
+let savedPhotos = [];
 
 const savePhotos = (data) => {
-  photos = data;
+  savedPhotos = data;
 };
 
 const filterPictures = (id) => {
@@ -16,15 +16,15 @@ const filterPictures = (id) => {
 
   switch (id) {
     case 'filter-random': {
-      renderPictures(getRandomArrayElements(photos, 10));
+      renderPictures(getRandomArrayElements(savedPhotos, 10));
       break;
     }
     case 'filter-discussed': {
-      renderPictures([...photos].sort((a, b) => b.comments.length - a.comments.length));
+      renderPictures([...savedPhotos].sort((a, b) => b.comments.length - a.comments.length));
       break;
     }
     default: {
-      renderPictures(photos);
+      renderPictures(savedPhotos);
     }
   }
 };
@@ -45,4 +45,4 @@ filtersForm.addEventListener('click', (e) => {
 });
 
 
-export {savePhotos};
+export {savePhotos, savedPhotos};

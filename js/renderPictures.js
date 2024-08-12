@@ -1,6 +1,16 @@
 import {renderBigPicture} from './renderBigPicture';
+import {savedPhotos} from './picturesFilter';
 
 const container = document.querySelector('.pictures');
+
+const onPhotoClick = (e) => {
+  const link = e.target.closest('a');
+
+  if (link) {
+    const photoData = savedPhotos.find((photo) => String(photo.id) === link.dataset.photoId);
+    renderBigPicture(photoData);
+  }
+};
 
 const renderPictures = (photos) => {
   const template = document.querySelector('#picture').content;
@@ -24,15 +34,7 @@ const renderPictures = (photos) => {
   }
 
   container.appendChild(fragment);
-
-  container.addEventListener('click', (e) => {
-    const link = e.target.closest('a');
-
-    if (link) {
-      const photoData = photos.find((photo) => String(photo.id) === link.dataset.photoId);
-      renderBigPicture(photoData);
-    }
-  });
+  container.addEventListener('click', onPhotoClick);
 };
 
 const removePictures = () => {

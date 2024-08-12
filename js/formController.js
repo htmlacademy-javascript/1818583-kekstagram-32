@@ -13,10 +13,8 @@ const previewImageElement = document.querySelector('.img-upload__preview').query
 
 const defaultConfig = {
   classTo: 'img-upload__field-wrapper',
-  errorClass: 'pristine-error',
   errorTextParent: 'img-upload__field-wrapper',
-  errorTextTag: 'div',
-  errorTextClass: 'img-upload__field-wrapper--error',
+  errorTextClass: 'img-upload__field-wrapper__error'
 };
 
 const pristine = new Pristine(form, defaultConfig);
@@ -53,28 +51,27 @@ const resetForm = () => {
   pristine.reset();
 };
 
+const closeAndResetForm = () => {
+  closeForm();
+  resetForm();
+};
+
 function closeFormByKey(e) {
   if (e.target.classList.contains('text__hashtags') || e.target.classList.contains('text__description')) {
     return;
   }
 
   if (e.key === 'Escape') {
-    closeForm();
-    resetForm();
+    closeAndResetForm();
   }
 }
 
-closeButton.addEventListener('click', () => {
-  closeForm();
-  resetForm();
-});
+closeButton.addEventListener('click', closeAndResetForm);
 
 // Валидация формы
 
-const convertHashtagStringToArray = (string) => string.split(' ').map((tag) => tag.trim()).filter((tag) => tag);
-
 const validateHashtagRepeat = (string) => {
-  const hashtags = string.split(' ').map((tag) => tag.trim().toLowerCase()).filter((tag) => tag);
+  const hashtags = string.split(' ').map((tag) => tag.toLowerCase());
   const mySet = new Set(hashtags);
   return mySet.size === hashtags.length;
 };
@@ -83,25 +80,32 @@ pristine.addValidator(
   hashtagsInput,
   validateHashtagRepeat,
   'Хештеги повторяются',
-  3,
+  2,
   true,
 );
 
-const validateHashtagLength = (string) => {
-  const array = convertHashtagStringToArray(string);
-  return array.length <= MAX_HASHTAGS;
-};
+const validateHashtagLength = (string) => string.split(' ').length <= MAX_HASHTAGS;
 
 pristine.addValidator(
   hashtagsInput,
   validateHashtagLength,
   'Превышено максимальное количество хештегов',
-  2,
+  1,
   true,
 );
 
 const validateHashtag = (string) => {
-  const hashtags = convertHashtagStringToArray(string);
+  if (string === '') {
+    return true;
+  }
+
+  const hashtags = string.split(' ');
+
+  for (let i = 0; i < hashtags.length; i++) {
+    if (hashtags[i].trim() === '') {
+      return false;
+    }
+  }
 
   let isValid = true;
 
@@ -118,7 +122,7 @@ pristine.addValidator(
   hashtagsInput,
   validateHashtag,
   'Невалидный хештег',
-  1,
+  3,
   true,
 );
 
