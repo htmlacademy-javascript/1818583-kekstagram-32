@@ -104,8 +104,6 @@ const initSlider = () => {
 
 document.addEventListener('DOMContentLoaded', initSlider);
 
-// Масштаб изображения
-
 const scalePreviewImage = (value) => {
   scaleInputElement.value = `${value}%`;
   imagePreviewElement.style.transform = `scale(${value / 100})`;
