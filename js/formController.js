@@ -19,8 +19,6 @@ const defaultConfig = {
 
 const pristine = new Pristine(form, defaultConfig);
 
-// Открытие и закрытие модального окна с загрузкой картинки
-
 const openForm = () => {
   const file = formInput.files[0];
   const fileName = file.name.toLowerCase();
